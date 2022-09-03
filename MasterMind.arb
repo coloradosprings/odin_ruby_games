@@ -163,7 +163,7 @@ class MasterMind
                 guess_arr_to_number = MasterMind.to_number(@guess_arr)
                 result = MasterMind.check(guess_arr_to_number,@selection_to_number)
                 @color_options.filter!{|numbers| MasterMind.check(guess_arr_to_number,numbers) == result}
-                p "Length: #{@color_options.length}"
+                #p "Length: #{@color_options.length}"
                 guess_arr = @color_options[0]
                 @guess_arr = MasterMind.to_letter(guess_arr)
                 MasterMind.set_memory
