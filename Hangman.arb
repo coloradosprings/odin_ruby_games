@@ -1,0 +1,129 @@
+require 'json'
+
+class Hangman
+    def initialize
+        Hangman.startgame()
+    end
+    def self.get_word()
+        word = ''
+        file = File.open('lib/words.txt','r')
+        word = file.readlines().map{|line| line.length > 5 && line.length <=12 ? line.chop : next}.compact.sample()
+        file.close()
+        return word
+    end
+
+    def self.startgame()
+        @word = Hangman.get_word
+        @guesses_left = 5
+        @guess_arr = []
+        @word_guessed = false
+        @word.length.times{@guess_arr.push("_")}
+        @iteration = 0
+        Hangman.ask_load()
+        until @guesses_left == 0 || @word_guessed == true do
+
+           
+            if @iteration == 0
+                @iteration += 1
+            else
+            puts "Guesses: #{@guesses_left}",
+            @guess_arr.join(" ")
+            end
+            Hangman.get_guess()
+            Hangman.check_guess()
+            @word.downcase.split('').include?(@guess) || @guess == 'save' ? nil : @guesses_left -= 1 
+        end
+        if @word_guessed == true
+            p 'You got it!'
+        else
+            puts "The word was '#{@word}'"
+        end
+    end
+
+    def self.get_guess()
+        puts "What's your guess?(type 'save' to save the game)"  
+        input = gets.chomp.downcase
+        until input.length == 1 || input == 'save' do
+            puts "Try again, What's your guess?"
+            input = gets.chomp.downcase()
+        end
+        input == 'save' ? Hangman.save_game() : @guess = input
+    end
+    def self.ask_load()
+        puts "Do you want to 'play', or 'load' a game"
+        answer = gets.chomp()
+        until answer == 'play' || answer == 'load' do
+            puts "type 'play' or 'load'"
+            answer = gets.chomp()
+        end
+        if answer == 'load'
+            puts "Saved games:"
+            games = Dir["./lib/games/*"]
+            games = games.map{|game| array = game.split('/');array[-1]}
+            games.each{|game| puts game}
+            puts "\nWhich game?\n"
+            name = gets.chomp 
+            until File.exist?("lib/games/#{name}") do
+                puts "Type in the name of the game"
+                name = gets.chop
+            end
+            Hangman.load_game(name)
+            
+        else
+        end
+    end
+
+
+                
+    def self.check_guess()
+        @word.split('').each_with_index do |k,i|
+            if @guess == k.downcase()
+                @guess_arr[i] = k 
+                             
+            else 
+                nil
+            end
+        end
+        if @guess_arr == @word.split('')
+            @word_guessed = true
+            p "You got it!"
+        end
+    end
+
+    def self.save_game()
+        p "Name?"
+        name = gets.chomp
+        savings = {
+            :@word => @word,
+            :@guess_arr => @guess_arr,
+            :@word_guessed => @word_guessed,
+            :@guesses_left => @guesses_left
+            
+        }
+        newfile = File.open("./lib/games/#{name}",'w'){|file|
+            JSON.dump(savings,file)
+        }
+    end
+    def self.load_game(name)
+        file = File.read("./lib/games/#{name}")
+        hash = JSON.parse(file)
+        @word = hash["@word"]
+        @guess_arr = hash["@guess_arr"]
+        @word_guessed = hash["@word_guessed"]
+        @guesses_left = hash["@guesses_left"]
+        @iteration = 1
+    end
+
+    
+end
+Hangman.new()
+        
+
+
+
+        
+
+
+
+        
+
