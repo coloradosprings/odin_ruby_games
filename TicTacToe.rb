@@ -1,9 +1,8 @@
 class TicTacToe
-  @@x_or_o = 'x'
-  @@has_x = ''
+  @x_or_o = 'x'
+  @has_x = ''
 
-  def self.play_game()
-    
+  def play_game()
     print 'Rounds?: '
     @rounds = gets.chomp
     while !(@rounds.to_i.is_a?(Integer) && @rounds.to_i > 0) do 
@@ -17,9 +16,9 @@ class TicTacToe
     for k in 1..@rounds.to_i do
     puts "==============\nRound:#{k}\n"
     
-    self.random_player()
-    self.start_round()
-    @@x_or_o = 'x'
+    random_player()
+    start_round()
+    @x_or_o = 'x'
     
     end
     print 'Thanks for playing!'
@@ -28,39 +27,38 @@ class TicTacToe
 
   private
 
-  def self.random_player()
+  def random_player()
     if (['p1','p2']).sample() == 'p1'
-      @@has_x = 'p1'
+      @has_x = 'p1'
       puts "Player_1 plays with 'X'\n==============\n"
     else
-      @@has_x = 'p2'
+      @has_x = 'p2'
       puts "Player_2 plays with 'X'\n==============\n"
     end
   end
 
 
 
-  def self.start_round()
+  def start_round()
     @grid = Array.new(3){ Array.new(3) }
     @win = false
-    while @win == false
-        self.make_move()
-        
-        
+    loop do
+      break if @win == true
+        make_move() 
     end
-    case @@x_or_o
+    case @x_or_o
       when 'x'
-        if @@has_x == 'p2'
+        if @has_x == 'p2'
           @p1_score += 1
-          else
+        else
           @p2_score += 1
           end
 
         
       when 'o'
-        if @@has_x == 'p1'
+        if @has_x == 'p1'
           @p1_score += 1
-          else
+        else
           @p2_score += 1
       end
 
@@ -70,22 +68,21 @@ class TicTacToe
     end
     print "Player_1: #{@p1_score} | Player_2: #{@p2_score}\n"
 
-    
-
   end
 
-  def self.make_move()
-    if @@x_or_o == 'x'
+  def make_move()
+    if @x_or_o == 'x'
       @token = 'X'
-      @@x_or_o = 'o'
+      @x_or_o = 'o'
 
     else
       @token = 'O'
-      @@x_or_o = 'x'
+      @x_or_o = 'x'
       
     end
     correctmove = false
-    while correctmove == false do
+    loop do 
+      break if correctmove == true
       print "#{@token.downcase}:\nrow:"
       row = gets.chomp.to_i - 1
       print 'column:'
@@ -93,7 +90,7 @@ class TicTacToe
       if @grid[row][col] == nil && row.between?(0,2) && col.between?(0,2)
         correctmove = true
         @grid[row][col] = @token
-        self.check_win()
+        check_win()
       else
         puts 'Invalid input, Try Again!'
       end
@@ -104,7 +101,7 @@ class TicTacToe
       
     
     end
-  def self.draw_grid()
+  def draw_grid()
         empty = @grid.map{|row| row.map{|val| val == nil ?  val = '-' : val = val}}
         print "\n
                 #{empty[0][0]}|#{empty[0][1]}|#{empty[0][2]}\n
@@ -112,9 +109,9 @@ class TicTacToe
                 #{empty[2][0]}|#{empty[2][1]}|#{empty[2][2]}\n"
     end    
 
-  def self.check_win()
+  def check_win()
         
-        self.draw_grid()
+        draw_grid()
         @grid.each do |row|
             if row.all?{|item| item == @token}
             @win = true
@@ -122,7 +119,7 @@ class TicTacToe
             nil
             end
         end
-        print @gridg
+
         @grid[0].each_with_index do |item,index|
             
             if @token == @grid[0][index] && @token == @grid[1][index] && @token == @grid[2][index]
@@ -133,20 +130,12 @@ class TicTacToe
             @win = true
         else
             nil
-        end
-
-            
-                
-
-
-
-        
-        
+        end   
     end
-
     public 
-
- 
 end
 
-TicTacToe.play_game()
+# game = TicTacToe.new()
+# game.play_game
+
+
